@@ -1,0 +1,23 @@
+DATA_FILE="mydata.txt"
+
+if [ "$#" -eq 0 ]; then
+	echo "Usage:phone searchfor [... searchfor]"
+	echo "(You didn't tell me what you wnat to search for.)"
+	exit 1
+fi
+SEARCH_PATTERN=""
+for term in "$@"; do
+    if [ -z "$SEARCH_PATTERN" ]; then
+        SEARCH_PATTERN="($term)"
+    else
+        SEARCH_PATTERN="$SEARCH_PATTERN.*($term)"
+    fi
+done
+
+egrep -i "$SEARCH_PATTERN" "$DATA_FILE" | awk -F '|' '{
+    print "--------------->"
+    print "name :"$1
+    print "address :"$2
+    print "phone :"$3
+    print "<--------------"
+}'

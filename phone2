@@ -1,0 +1,30 @@
+DATA_FILE="mydata.txt"
+
+if [ "$#" -eq 0 ]; then
+	echo "Usage:phone searchfor [... searchfor]"
+	echo "(You didn't tell me what you wnat to search for.)"
+	exit 1
+fi
+if [ $1=’-and’]; then
+	SEARCH_PATTERN=""
+for term in "$@"; do
+    	if [ -z "$SEARCH_PATTERN" ]; then
+        		SEARCH_PATTERN="($term)"
+    	else
+        	SEARCH_PATTERN="$SEARCH_PATTERN.*($term)"
+    	fi
+done
+elif [ $1=’-or’]; then
+	SEARCH_PATTERN=$(echo “$@” | sed ‘s/ /|/g’)
+else
+	echo "(You didn't put the right command.)"
+	exit 1
+fi
+
+egrep -i "$SEARCH_PATTERN" "$DATA_FILE" | awk -F '|' '{
+    print "--------------->"
+    print "name :"$1
+    print "address :"$2
+    print "phone :"$3
+    print "<--------------"
+}'
